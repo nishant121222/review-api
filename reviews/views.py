@@ -90,7 +90,7 @@ class SubmitReviewView(APIView):
 
         # ✅ Redirect logic
         if rating >= 4:
-            data["google_review_link"] = f"https://search.google.com/local/writereview?placeid={GOOGLE_LOCATION_ID}"
+            data["google_review_link"] = f"https://search.google.com/local/writereview?placeid={ChIJ9Yw2ruq_wjsRjcPfsQ6gNS8}"
             data["spin_page_url"] = SPIN_PAGE_URL
         elif rating == 3:
             data["spin_page_url"] = SPIN_PAGE_URL
