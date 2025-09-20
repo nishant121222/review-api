@@ -138,21 +138,20 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'review_system',
-        'USER': 'review_user',
-        'PASSWORD': 'StrongPassword123!',
-        'HOST': '10.142.138.25',
+        'NAME': 'review_user',   # Your full DB name
+        'USER': 'review_user',     # Full username with prefix
+        'PASSWORD': 'Nishant@2002',
+        'HOST': '118.139.179.98',                # Use localhost if Django is inside cPanel
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
             'charset': 'utf8mb4',
-            'connect_timeout': 30,         # connection establish hone ka wait
+            'connect_timeout': 30,
             'autocommit': True,
         },
-        'CONN_MAX_AGE': 3600,  # 1 hour persistent connection
+        'CONN_MAX_AGE': 3600,
     }
 }
-
 
 # -----------------------
 # Custom AdminUser
@@ -251,3 +250,4 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "sessions"
+
