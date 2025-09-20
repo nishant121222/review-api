@@ -1,11 +1,13 @@
-# businesses/views.py
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
 import json
+from django.contrib.auth import get_user_model
 from .models import Business
-from accounts.models import AdminUser
+
+User = get_user_model()
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class BusinessListView(View):
@@ -14,15 +16,14 @@ class BusinessListView(View):
     GET /api/admin/businesses/
     """
     def get(self, request):
-        # Only allow authenticated admin users
         if not hasattr(request, 'user') or not request.user.is_authenticated:
-            return JsonResponse({'error': 'Authentication required'}, status=401)
+            return JsonResponse({'status': False, 'message': 'Authentication required', 'data': []}, status=401)
 
-        # Owners see all their businesses; admins see their assigned business
-        if request.user.role == 'owner':
-            businesses = Business.objects.filter(owner=request.user)
-        else:
-            businesses = Business.objects.filter(owner=request.user)
+        # Owners see all their businesses
+        businesses = Business.objects.filter(owner=request.user)
+
+        if not businesses.exists():
+            return JsonResponse({'status': False, 'message': 'No Records Found', 'data': []})
 
         data = [
             {
@@ -35,7 +36,7 @@ class BusinessListView(View):
             }
             for b in businesses
         ]
-        return JsonResponse({'businesses': data})
+        return JsonResponse({'status': True, 'message': 'Businesses fetched successfully', 'data': data})
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -48,25 +49,29 @@ class BusinessDetailView(View):
     def get(self, request, business_id):
         try:
             business = Business.objects.get(id=business_id)
-            if request.user != business.owner and request.user.role != 'owner':
-                return JsonResponse({'error': 'Permission denied'}, status=403)
+            if request.user != business.owner:
+                return JsonResponse({'status': False, 'message': 'Permission denied', 'data': None}, status=403)
 
             return JsonResponse({
-                'id': business.id,
-                'name': business.name,
-                'google_location_id': business.google_location_id,
-                'account_id': business.account_id,
-                'settings': business.settings,
-                'created_at': business.created_at.isoformat()
+                'status': True,
+                'message': 'Business fetched successfully',
+                'data': {
+                    'id': business.id,
+                    'name': business.name,
+                    'google_location_id': business.google_location_id,
+                    'account_id': business.account_id,
+                    'settings': business.settings,
+                    'created_at': business.created_at.isoformat()
+                }
             })
         except Business.DoesNotExist:
-            return JsonResponse({'error': 'Business not found'}, status=404)
+            return JsonResponse({'status': False, 'message': 'Business not found', 'data': None}, status=404)
 
     def put(self, request, business_id):
         try:
             business = Business.objects.get(id=business_id)
             if request.user != business.owner:
-                return JsonResponse({'error': 'Permission denied'}, status=403)
+                return JsonResponse({'status': False, 'message': 'Permission denied', 'data': None}, status=403)
 
             data = json.loads(request.body)
 
@@ -74,20 +79,18 @@ class BusinessDetailView(View):
             business.google_location_id = data.get('google_location_id', business.google_location_id)
             business.account_id = data.get('account_id', business.account_id)
             business.settings = data.get('settings', business.settings)
-
-            # Handle google_api_creds securely
             if 'google_api_creds' in data:
                 business.google_api_creds = data['google_api_creds']
 
             try:
-                business.full_clean()  # Runs model validation
+                business.full_clean()
                 business.save()
-                return JsonResponse({'success': True, 'id': business.id})
+                return JsonResponse({'status': True, 'message': 'Business updated successfully', 'data': {'id': business.id}})
             except Exception as e:
-                return JsonResponse({'error': str(e)}, status=400)
+                return JsonResponse({'status': False, 'message': str(e), 'data': None}, status=400)
 
         except Business.DoesNotExist:
-            return JsonResponse({'error': 'Business not found'}, status=404)
+            return JsonResponse({'status': False, 'message': 'Business not found', 'data': None}, status=404)
 
 
 # Assign views

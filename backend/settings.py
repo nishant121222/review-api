@@ -23,22 +23,24 @@ DEBUG = True  # Change to False in production
 # -----------------------
 ALLOWED_HOSTS = [
     '10.142.138.25',
+    '10.142.138.5',
     '127.0.0.1',
     'localhost',
     '69.62.72.122',
     'miramata.tech',
-    'www.miramata.tech'
+    'www.miramata.tech',
 ]
-
-
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",   # Angular dev server
-    "http://127.0.0.1:4200",   # agar local ip use ho frontend ke liye
-    "https://miramata.tech",   # production site
-    "https://www.miramata.tech"
+    "http://localhost:4200",        # Angular dev server
+    "http://127.0.0.1:4200",        # Localhost for dev
+    "http://10.142.138.25:4200",    # Angular served on LAN (PC1)
+    "http://10.142.138.5:4200",     # Angular served on LAN (PC2)
+    "https://miramata.tech",        # Production
+    "https://www.miramata.tech",
+    "http://10.142.138.25:8000",    # API direct
+    "http://10.142.138.5:8000",     # API direct
 ]
-
 
 CORS_ALLOW_METHODS = [
     "GET",
@@ -61,13 +63,13 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-
-# Agar cookies ya auth token bhejna hai to
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "https://miramata.tech",
     "http://localhost:4200",
+    "http://10.142.138.25:4200",
+    "http://10.142.138.5:4200",
 ]
 
 
@@ -155,7 +157,7 @@ DATABASES = {
 # -----------------------
 # Custom AdminUser
 # -----------------------
-AUTH_USER_MODEL = 'accounts.AdminUser'
+AUTH_USER_MODEL = 'accounts.User'
 
 # -----------------------
 # REST Framework & JWT
@@ -170,8 +172,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1222),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=788),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
 }
 

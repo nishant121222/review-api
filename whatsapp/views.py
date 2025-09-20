@@ -4,18 +4,17 @@ from rest_framework import status, permissions
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from accounts.models import AdminUser
-from .services import send_whatsapp_message
+from .services import send_whatsapp_message  # No need for AdminUser import
 
 
 class TestSendView(APIView):
     """
     Public – send a test WhatsApp message (no JWT required).
     """
-    permission_classes = [permissions.AllowAny]  # 👈 now public
+    permission_classes = [permissions.AllowAny]  # Public access
 
     @swagger_auto_schema(
-        security=[],  # 👈 removes lock icon in Swagger
+        security=[],  # removes lock icon in Swagger
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={

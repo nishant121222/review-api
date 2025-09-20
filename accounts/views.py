@@ -1,16 +1,14 @@
+from django.utils import timezone
+from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from django.utils import timezone
-from django.contrib.auth import get_user_model
-
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .serializers import UserSerializer, AdminUserSerializer
+from .serializers import UserSerializer
 
-# Custom User models
-User = get_user_model()  # regular user
-AdminUser = get_user_model()  # admin user
+User = get_user_model()
+
 
 # ----------------------------
 # ✅ Custom JWT Serializer
@@ -19,8 +17,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        token["role"] = getattr(user, "role", None)
-        token["business_id"] = user.business.id if getattr(user, "business", None) else None
+        token["business_id"] = getattr(user, "business_id", None)
+        token["phone"] = getattr(user, "phone", None)
         return token
 
     def validate(self, attrs):
@@ -29,19 +27,21 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             "id": self.user.id,
             "username": self.user.username,
             "email": self.user.email,
-            "role": getattr(self.user, "role", None),
-            "business": getattr(self.user.business, "name", None) if getattr(self.user, "business", None) else None,
+            "phone": self.user.phone,
+            "business_id": self.user.business_id,
         })
         return data
 
+
 # ----------------------------
-# ✅ Custom JWT Login View
+# ✅ JWT Login View
 # ----------------------------
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
+
 # ----------------------------
-# ✅ Public: Check user by phone
+# ✅ Check user by phone
 # ----------------------------
 class CheckUserView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -53,8 +53,9 @@ class CheckUserView(APIView):
         u = User.objects.filter(phone=phone).first()
         return Response({"returning_user": bool(u), "user_id": u.id if u else None})
 
+
 # ----------------------------
-# ✅ Public: Create regular user
+# ✅ Create regular user
 # ----------------------------
 class CreateUserView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -69,8 +70,9 @@ class CreateUserView(APIView):
 
         u, created = User.objects.get_or_create(
             phone=phone,
-            defaults={"name": name, "business_id": business_id},
+            defaults={"name": name, "business_id": business_id, "username": phone},
         )
+
         if not created:
             if name:
                 u.name = name
@@ -80,20 +82,51 @@ class CreateUserView(APIView):
             u.save()
 
         return Response(
-            {"id": u.id, "phone": u.phone, "name": u.name, "business_id": u.business_id, "created": created},
+            {"status": True, "message": "User created successfully" if created else "User updated",
+             "data": {
+                 "id": u.id,
+                 "phone": u.phone,
+                 "name": u.name,
+                 "business_id": u.business_id
+             }},
             status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
         )
 
+
 # ----------------------------
-# ✅ Public: List all users
+# ✅ List all users
 # ----------------------------
 class ListAllUsersView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         users = User.objects.all()
+        if not users.exists():
+            return Response({"status": False, "message": "No Records Found", "data": []})
         serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
+        return Response({"status": True, "message": "Users fetched successfully", "data": serializer.data})
+
+
+# ----------------------------
+# ✅ Get Latest User
+# ----------------------------
+class LatestUserView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        latest_user = User.objects.order_by('-id').values('id', 'username', 'is_superuser').first()
+        if latest_user:
+            return Response({
+                "status": True,
+                "message": "Latest user fetched successfully",
+                "data": latest_user
+            }, status=status.HTTP_200_OK)
+        return Response({
+            "status": False,
+            "message": "No user found",
+            "data": None
+        }, status=status.HTTP_404_NOT_FOUND)
+
 
 # ----------------------------
 # ✅ Protected: Profile
@@ -104,34 +137,13 @@ class ProfileView(APIView):
     def get(self, request):
         user = request.user
         return Response({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "role": getattr(user, "role", None),
-            "business": getattr(user.business, "name", None) if getattr(user, "business", None) else None,
+            "status": True,
+            "message": "Profile fetched successfully",
+            "data": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "phone": user.phone,
+                "business_id": user.business_id,
+            }
         })
-
-# ----------------------------
-# ✅ Public: Create Admin user from frontend
-# ----------------------------
-class CreateAdminUserView(APIView):
-    permission_classes = [permissions.AllowAny]  # ya aap custom permission set kar sakte ho
-
-    def post(self, request):
-        username = request.data.get("username")
-        email = request.data.get("email")
-        password = request.data.get("password")
-
-        if not username or not email or not password:
-            return Response({"error": "username, email, and password are required"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if AdminUser.objects.filter(username=username).exists():
-            return Response({"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
-
-        admin = AdminUser.objects.create_superuser(username=username, email=email, password=password)
-        return Response({
-            "id": admin.id,
-            "username": admin.username,
-            "email": admin.email,
-            "created": True
-        }, status=status.HTTP_201_CREATED)
