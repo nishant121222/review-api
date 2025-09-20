@@ -141,7 +141,7 @@ DATABASES = {
         'NAME': 'review_user',   # Your full DB name
         'USER': 'review_user',     # Full username with prefix
         'PASSWORD': 'Nishant@2002',
-        'HOST': 'localhost',                # Use localhost if Django is inside cPanel
+        'HOST': '118.139.179.98',                # Use localhost if Django is inside cPanel
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
@@ -250,5 +250,6 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "sessions"
+
 
 
