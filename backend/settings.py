@@ -73,6 +73,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:4200",
     "http://10.142.138.25:4200",
     "http://10.142.138.5:4200",
+    "https://lemiroir.miramata.tech",
 ]
 
 
@@ -253,6 +254,7 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "sessions"
+
 
 
 
