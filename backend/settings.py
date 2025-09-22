@@ -39,8 +39,10 @@ CORS_ALLOWED_ORIGINS = [
     "https://miramata.tech",        # Production
     "https://www.miramata.tech",
     "http://10.142.138.25:8000",    # API direct
-    "http://10.142.138.5:8000",     # API direct
+    "http://10.142.138.5:8000", 
+    "https://api.lemiroir.miramata.tech"    # Remove trailing slash
 ]
+
 
 CORS_ALLOW_METHODS = [
     "GET",
@@ -70,7 +72,9 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:4200",
     "http://10.142.138.25:4200",
     "http://10.142.138.5:4200",
+    "https://api.lemiroir.miramata.tech"   # Remove trailing slash
 ]
+
 
 
 
