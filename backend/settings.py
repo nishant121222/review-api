@@ -25,6 +25,18 @@ DEBUG = True  # Change to False in production
 # CORS settings
 # -----------------------
 CORS_ALLOW_ALL_ORIGINS = True
+
+ALLOWED_HOSTS = [
+    '10.142.138.25',
+    '10.142.138.5',
+    '127.0.0.1',
+    'localhost',
+    '69.62.72.122',
+    'miramata.tech',
+    'www.miramata.tech',
+    'api.lemiroir.miramata.tech'
+]
+
 CORS_ALLOW_METHODS = [
     "GET",
     "POST",
@@ -237,6 +249,7 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "sessions"
+
 
 
 
