@@ -49,11 +49,17 @@ CORS_ALLOW_CREDENTIALS = True
 # -----------------------
 # CSRF settings
 # -----------------------
-CSRF_TRUSTED_ORIGINS = ['*']
-
-
-
-
+# Keep CSRF trusted origins safe
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:4200",
+    "http://127.0.0.1:4200",
+    "http://10.142.138.25:4200",
+    "http://10.142.138.5:4200",
+    "https://miramata.tech",
+    "https://www.miramata.tech",
+    "https://api.lemiroir.miramata.tech",
+    "https://lemiroir.miramata.tech",
+]
 
 # -----------------------
 # Application definition
@@ -231,6 +237,7 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "sessions"
+
 
 
 
