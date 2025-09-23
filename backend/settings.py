@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")  # ✅ Use .env value
-DEBUG = False  # Change to False in production
+DEBUG = True  # Change to False in production
 
 # -----------------------
 # Allowed Hosts
@@ -260,6 +260,7 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "sessions"
+
 
 
 
