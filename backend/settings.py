@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     '69.62.72.122',
     'miramata.tech',
     'www.miramata.tech',
+    'api.lemiroir.miramata.tech'
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -76,6 +77,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://10.142.138.5:4200",
     "https://api.lemiroir.miramata.tech",
     "https://lemiroir.miramata.tech/user"  # Remove trailing slash
+    
 ]
 
 
@@ -258,5 +260,6 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "sessions"
+
 
 
