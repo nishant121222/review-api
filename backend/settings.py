@@ -21,32 +21,10 @@ DEBUG = True  # Change to False in production
 # -----------------------
 # Allowed Hosts
 # -----------------------
-ALLOWED_HOSTS = [
-    '10.142.138.25',
-    '10.142.138.5',
-    '127.0.0.1',
-    'localhost',
-    '69.62.72.122',
-    'miramata.tech',
-    'www.miramata.tech',
-    'api.lemiroir.miramata.tech'
-]
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",        # Angular dev server
-    "http://127.0.0.1:4200",        # Localhost for dev
-    "http://10.142.138.25:4200",    # Angular served on LAN (PC1)
-    "http://10.142.138.5:4200",     # Angular served on LAN (PC2)
-    "https://miramata.tech",        # Production
-    "https://www.miramata.tech",
-    "http://10.142.138.25:8000",    # API direct
-    "http://10.142.138.5:8000", 
-    "https://api.lemiroir.miramata.tech",
-    "https://lemiroir.miramata.tech"   # ✅ removed `/user`
-]
-
-
-
+# -----------------------
+# CORS settings
+# -----------------------
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_METHODS = [
     "GET",
     "POST",
@@ -55,7 +33,6 @@ CORS_ALLOW_METHODS = [
     "DELETE",
     "OPTIONS",
 ]
-
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",
@@ -67,18 +44,12 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
-
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://miramata.tech",
-    "http://localhost:4200",
-    "http://10.142.138.25:4200",
-    "http://10.142.138.5:4200",
-    "https://api.lemiroir.miramata.tech",
-    "https://lemiroir.miramata.tech/user"  # Remove trailing slash
-    
-]
+# -----------------------
+# CSRF settings
+# -----------------------
+CSRF_TRUSTED_ORIGINS = ['*']
 
 
 
@@ -260,6 +231,7 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "sessions"
+
 
 
 
