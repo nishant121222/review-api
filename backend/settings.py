@@ -29,7 +29,6 @@ ALLOWED_HOSTS = [
     '69.62.72.122',
     'miramata.tech',
     'www.miramata.tech',
-     'api.lemiroir.miramata.tech'
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -41,8 +40,10 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.miramata.tech",
     "http://10.142.138.25:8000",    # API direct
     "http://10.142.138.5:8000", 
-    "https://api.lemiroir.miramata.tech"    # Remove trailing slash
+    "https://api.lemiroir.miramata.tech",
+    "https://lemiroir.miramata.tech"   # ✅ removed `/user`
 ]
+
 
 
 CORS_ALLOW_METHODS = [
@@ -73,8 +74,14 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:4200",
     "http://10.142.138.25:4200",
     "http://10.142.138.5:4200",
-    "https://api.lemiroir.miramata.tech"   # Remove trailing slash
+    "https://api.lemiroir.miramata.tech",
+    "https://lemiroir.miramata.tech/user"  # Remove trailing slash
 ]
+
+
+
+
+
 # -----------------------
 # Application definition
 # -----------------------
@@ -138,10 +145,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'review_user',   # Your full DB name
-        'USER': 'review_user',     # Full username with prefix
-        'PASSWORD': 'Nishant@2002',
-        'HOST': '118.139.179.98',                # Use localhost if Django is inside cPanel
+        'NAME': 'review_user',      # Database name
+        'USER': 'review_user',      # MySQL user
+        'PASSWORD': 'Nishant@2002', # Password
+        'HOST': '118.139.179.98',  # Server IP
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
@@ -152,6 +159,7 @@ DATABASES = {
         'CONN_MAX_AGE': 3600,
     }
 }
+
 
 # -----------------------
 # Custom AdminUser
@@ -250,11 +258,5 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "sessions"
-
-
-
-
-
-
 
 
