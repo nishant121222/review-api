@@ -1,3 +1,5 @@
+# accounts/models.py
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from businesses.models import Business
@@ -5,7 +7,9 @@ from businesses.models import Business
 class User(AbstractUser):
     phone = models.CharField(max_length=15, unique=True, blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
-    business = models.ForeignKey(Business, on_delete=models.SET_NULL, null=True, blank=True)
+    business = models.ForeignKey(
+        Business, on_delete=models.SET_NULL, null=True, blank=True
+    )
     first_seen_at = models.DateTimeField(auto_now_add=True)
     last_seen_at = models.DateTimeField(auto_now=True)
     metadata = models.JSONField(default=dict, blank=True)
@@ -17,7 +21,8 @@ class User(AbstractUser):
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="user")
 
-    USERNAME_FIELD = "username"   # You can also use "phone"
+    # Use username for authentication
+    USERNAME_FIELD = "username"  
     REQUIRED_FIELDS = ["email"]
 
     def __str__(self):

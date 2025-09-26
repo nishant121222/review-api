@@ -1,7 +1,8 @@
+# accounts/admin.py
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User
-
 
 @admin.register(User)
 class CustomUserAdmin(BaseUserAdmin):
@@ -18,7 +19,12 @@ class CustomUserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         ("Personal Info", {"fields": ("name", "phone", "email", "business")}),
-        ("Roles & Permissions", {"fields": ("role", "is_staff", "is_active", "is_superuser", "groups", "user_permissions")}),
+        ("Roles & Permissions", {
+            "fields": (
+                "role", "is_staff", "is_active", "is_superuser", 
+                "groups", "user_permissions"
+            )
+        }),
         ("Timestamps", {"fields": ("first_seen_at", "last_seen_at", "date_joined", "last_login")}),
     )
 
@@ -33,4 +39,5 @@ class CustomUserAdmin(BaseUserAdmin):
         }),
     )
 
-    readonly_fields = ("first_seen_at", "last_seen_at", "date_joined", "last_login")
+    # Make these fields read-only
+    readonly_fields = ("first_seen_at", "last_seen_at", "date_joined", "last_login", "password")

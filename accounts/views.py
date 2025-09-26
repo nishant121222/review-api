@@ -6,6 +6,7 @@ from rest_framework import status, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .serializers import UserSerializer
+from businesses.models import Business  # Import Business model
 
 User = get_user_model()
 
@@ -55,7 +56,7 @@ class CheckUserView(APIView):
 
 
 # ----------------------------
-# ✅ Create regular user
+# ✅ Create regular user (Safe)
 # ----------------------------
 class CreateUserView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -68,27 +69,37 @@ class CreateUserView(APIView):
         if not phone:
             return Response({"error": "phone is required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        business = None
+        if business_id:
+            try:
+                business = Business.objects.get(id=business_id)
+            except Business.DoesNotExist:
+                return Response({"error": "Business not found."}, status=status.HTTP_400_BAD_REQUEST)
+
         u, created = User.objects.get_or_create(
             phone=phone,
-            defaults={"name": name, "business_id": business_id, "username": phone},
+            defaults={"name": name, "business": business, "username": phone},
         )
 
         if not created:
             if name:
                 u.name = name
-            if business_id:
-                u.business_id = business_id
+            if business:
+                u.business = business
             u.last_seen_at = timezone.now()
             u.save()
 
         return Response(
-            {"status": True, "message": "User created successfully" if created else "User updated",
-             "data": {
-                 "id": u.id,
-                 "phone": u.phone,
-                 "name": u.name,
-                 "business_id": u.business_id
-             }},
+            {
+                "status": True,
+                "message": "User created successfully" if created else "User updated",
+                "data": {
+                    "id": u.id,
+                    "phone": u.phone,
+                    "name": u.name,
+                    "business_id": u.business.id if u.business else None
+                }
+            },
             status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
         )
 
@@ -144,6 +155,6 @@ class ProfileView(APIView):
                 "username": user.username,
                 "email": user.email,
                 "phone": user.phone,
-                "business_id": user.business_id,
+                "business_id": user.business.id if user.business else None,
             }
         })

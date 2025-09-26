@@ -145,11 +145,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'review_user',      # Database name
-        'USER': 'review_user',      # MySQL user
-        'PASSWORD': 'Nishant@2002', # Password
-        'HOST': '118.139.179.98',  # Server IP
-        'PORT': '3306',
+        'NAME': 'review_user',       # DB name
+        'USER': 'review_user',       # DB user
+        'PASSWORD': 'Nishant@2002',  # DB password
+        'HOST': '127.0.0.1',        # Or an IP Address that your DB is hosted on
+        'PORT': '3306',            
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
             'charset': 'utf8mb4',
@@ -161,10 +161,13 @@ DATABASES = {
 }
 
 
+
+
 # -----------------------
 # Custom AdminUser
 # -----------------------
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'accounts.User'  # Or whatever your model name is
+
 
 # -----------------------
 # REST Framework & JWT
